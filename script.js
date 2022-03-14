@@ -1,3 +1,15 @@
+// const completeBtn = document.createElement('button');
+//   completeBtn.classList.add('complete');
+//   completeBtn.innerHTML = '<i class="fas fa-check"></i>';
+
+//   const editBtn = document.createElement('button');
+//   editBtn.classList.add('edit');
+//   editBtn.textContent = 'EDIT';
+
+//   const deleteBtn = document.createElement('button');
+//   deleteBtn.classList.add('delete');
+//   deleteBtn.innerHTML = '<i class="fas fa-times"></i>';
+
 let todoInput,
   errorInfo,
   addBtn,
@@ -7,7 +19,8 @@ let todoInput,
   todoEdit,
   popupInput,
   popupAddBtn,
-  popupCloseBtn;
+  popupCloseBtn,
+  test;
 
 const main = () => {
   prepareDOMElements();
@@ -28,32 +41,31 @@ const prepareDOMElements = () => {
 };
 
 const prepareDOMEvents = () => {
+  todoInput.addEventListener('keyup', enterKeyCheck);
   addBtn.addEventListener('click', addNewTodo);
   ulList.addEventListener('click', checkClick);
-  popupCloseBtn.addEventListener('click', closePopup);
-  popupAddBtn.addEventListener('click', changeTodoText);
-  todoInput.addEventListener('keyup', enterKeyCheck);
+  popupAddBtn.addEventListener('click', changeInput);
+  popupCloseBtn.addEventListener('click', closeForm);
 };
 
 const addNewTodo = () => {
   if (todoInput.value !== '') {
     const newTodo = document.createElement('li');
     newTodo.textContent = todoInput.value;
-    createToolsArea(newTodo);
+    arenaTools(newTodo);
 
-    ulList.append(newTodo);
-
+    ulList.appendChild(newTodo);
     todoInput.value = '';
     errorInfo.textContent = '';
   } else {
-    errorInfo.textContent = 'Enter the task text...';
+    errorInfo.textContent = 'Wpisz coś!';
   }
 };
 
-const createToolsArea = (newTodo) => {
-  const toolsPanel = document.createElement('div');
-  toolsPanel.classList.add('tools');
-  newTodo.append(toolsPanel);
+const arenaTools = (newTodo) => {
+  const tool = document.createElement('div');
+  tool.classList.add('tools');
+  newTodo.appendChild(tool);
 
   const completeBtn = document.createElement('button');
   completeBtn.classList.add('complete');
@@ -67,46 +79,49 @@ const createToolsArea = (newTodo) => {
   deleteBtn.classList.add('delete');
   deleteBtn.innerHTML = '<i class="fas fa-times"></i>';
 
-  toolsPanel.append(completeBtn, editBtn, deleteBtn);
+  tool.append(completeBtn, editBtn, deleteBtn);
 };
 
 const checkClick = (e) => {
   if (e.target.matches('.complete')) {
     e.target.closest('li').classList.toggle('completed');
+    // console.log(e.target.closest('li').innerHTML);
     e.target.classList.toggle('completed');
   } else if (e.target.matches('.edit')) {
-    editTodo(e);
+    editInput(e);
   } else if (e.target.matches('.delete')) {
-    deleteTodo(e);
+    deletePosition(e);
   }
 };
 
-const editTodo = (e) => {
-  todoEdit = e.target.closest('li');
-  popupInput.value = todoEdit.firstChild.textContent;
-  console.log(todoEdit.firstChild);
+const editInput = (e) => {
+  test = e.target.closest('li');
+  // li.childNodes[0].textContent;
   popup.style.display = 'flex';
+  popupInput.value = test.childNodes[0].textContent;
 };
 
-const closePopup = () => {
-  popup.style.display = 'none';
-  popupInfo.textContent = '';
-};
-
-const changeTodoText = () => {
+const changeInput = () => {
   if (popupInput.value !== '') {
-    todoEdit.firstChild.textContent = popupInput.value;
+    test.childNodes[0].textContent = popupInput.value;
     popup.style.display = 'none';
     popupInfo.textContent = '';
   } else {
-    popupInfo.textContent = 'Enter the task text...';
+    popupInfo.textContent = 'Uzupełnij pola';
   }
 };
 
-const deleteTodo = (e) => {
-  e.target.closest('li').remove();
+const closeForm = () => {
+  popup.style.display = 'none';
+  popupInfo.textContent = '';
+  popupInput.value = '';
+};
 
-  const allTodos = document.querySelectorAll('li');
+const deletePosition = (e) => {
+  todoEdit = e.target.closest('li');
+  todoEdit.remove();
+
+  let allTodos = document.querySelectorAll('li');
 
   if (allTodos.length === 0) {
     errorInfo.textContent = 'No tasks on the list...';
